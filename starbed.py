@@ -19,7 +19,8 @@ class StarBed:
 		self.settings.screen_height = self.screen.get_rect().height
 		pygame.display.set_caption("Star Bed")
 
-		self.star = Star(self)
+		self.stars = pygame.sprite.Group()
+		self._create_star_field()
 
 	def run_game(self):
 		"""Start the main loop for the code."""
@@ -36,13 +37,48 @@ class StarBed:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				sys.exit()
-			elif event.key == pygame.K_q:
+			elif event.type == pygame.KEYDOWN:
+				self._check_keydown_events(event)
+
+	def _check_keydown_events(self,event):
+		"""Respond to key presses."""
+		if event.key == pygame.K_q:
 				sys.exit()
+
+	def _create_star_field(self):
+		"""Create a field of stars."""
+
+		#Create a star and find the number of stars in a row.
+		#Spacing between each star is equal to one star width.
+
+		star = Star(self)
+		star_width, star_height = star.rect.size
+		available_space_x = self.settings.screen_width -(2*star_width)
+		number_stars_x = available_space_x // (2*star_width)
+
+		#Determine the number of rows of aliens that fit on the screen.
+
+		available_space_y = self.settings.screen_height - (2* star_height)
+		number_rows = available_space_y // (2*star_height)
+
+		#Create the bed of stars.
+		for row_number in range(number_rows):
+			for star_number in range (number_stars_x):
+				self._create_star(star_number, row_number)
+	
+	def _create_star(self, star_number, row_number):
+		"""Create a star and place it in the row."""
+		star = Star(self)
+		star_width, star_height = star.rect.size
+		star.x = star_width + 2*star_width*star_number
+		star.rect.x = star.x
+		star.rect.y = star.rect.height + 2*star.rect.height * row_number
+		self.stars.add(star)
 
 	def _update_screen(self):
 		"""Update images on the screen and flip to the new screen."""
-		self.screen.fill (self.settngs.bg_color)
-		self.star.blitme()
+		self.screen.fill (self.settings.bg_color)
+		self.stars.draw(self.screen)
 
 		pygame.display.flip()
 
