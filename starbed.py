@@ -1,8 +1,9 @@
 import sys
 import pygame
-
+from random import randint
 from settings import Settings
 from star import Star
+
 
 class StarBed:
 	"""Overall class to manage assets and behavior."""
@@ -21,6 +22,9 @@ class StarBed:
 
 		self.stars = pygame.sprite.Group()
 		self._create_star_field()
+
+		
+			
 
 	def run_game(self):
 		"""Start the main loop for the code."""
@@ -50,7 +54,6 @@ class StarBed:
 
 		#Create a star and find the number of stars in a row.
 		#Spacing between each star is equal to one star width.
-
 		star = Star(self)
 		star_width, star_height = star.rect.size
 		available_space_x = self.settings.screen_width -(2*star_width)
@@ -68,11 +71,17 @@ class StarBed:
 	
 	def _create_star(self, star_number, row_number):
 		"""Create a star and place it in the row."""
+		random_number = randint(-10, 10)
 		star = Star(self)
 		star_width, star_height = star.rect.size
-		star.x = star_width + 2*star_width*star_number
-		star.rect.x = star.x
-		star.rect.y = star.rect.height + 2*star.rect.height * row_number
+		star.x = star_width + random_number + 2*star_width*star_number
+		star.rect.x = star.x 
+		star.rect.y = star.rect.height + random_number + 2*star.rect.height * row_number
+		
+		#Randomize the stars further
+		star.rect.x += randint(-5, 5)
+		star.rect.y += randint(-5, 5)
+
 		self.stars.add(star)
 
 	def _update_screen(self):
